@@ -1,20 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
     const phrases = [
-        "Quelqu'un arrive en retard ⏳",
-        "Une blague pourrie est racontée 🤡",
-        "Quelqu'un casse un verre 🍷💥",
-        "Une référence à un vieux souvenir 📸",
-        "Quelqu'un chante faux 🎤",
-        "Le GPS nous perd 🗺️",
-        "Un débat inutile démarre 🤔",
-        "Quelqu'un s'endort en premier 🛏️",
-        "Quelqu'un oublie un truc essentiel 🎒",
-        "Quelqu'un dit 'c'était mieux avant' 🎶",
-        "Une private joke incompréhensible 🤨",
-        "Quelqu'un se perd en randonnée 🌲",
-        "On manque de nourriture 🍕",
-        "Une boisson renversée sur la table 🍹",
-        "Un réveil trop matinal 💤"
+        "Cyrielle va se coucher tôt 😴",
+        "Quelqu'un dit que c'était mieux avant (hors 3A)",
+        "On est à court d'alcool 🍻",
+        "Des gens se pécho 🥰",
+        "Des gens dansent le rock (stop svp 😭)",
+        "JB lance un coin-coin 🦆",
+        "Quelqu'un fait une ref au sel 🧂",
+        "Dorian dit 'Bon appétit' 🍽️",
+        "Un rubik's cube apparait 🧩",
+        "Quelqu'un finit au sol 🤕",
+        "Quelqu'un se perd en randonnée 🌲"
     ];
 
     const grid = document.getElementById("bingoGrid");
