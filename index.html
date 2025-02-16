@@ -4,37 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bingo du Week-End 🎉</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            color: #333;
-        }
-        .bingo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-        .bingo-cell {
-            background: white;
-            padding: 20px;
-            border: 2px solid #333;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .bingo-cell.checked {
-            background: #4CAF50;
-            color: white;
-            text-decoration: line-through;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -42,52 +12,11 @@
     <p>Clique sur une case lorsque la phrase correspond à une situation vécue !</p>
 
     <div class="bingo-grid" id="bingoGrid">
-        <!-- Les cases seront générées ici -->
+        <!-- Cases générées dynamiquement -->
     </div>
 
-    <script>
-        // Liste des phrases du bingo
-        const phrases = [
-            "Quelqu'un arrive en retard ⏳",
-            "Une blague pourrie est racontée 🤡",
-            "Quelqu'un casse un verre 🍷💥",
-            "Une référence à un vieux souvenir 📸",
-            "Quelqu'un chante faux 🎤",
-            "Le GPS nous perd 🗺️",
-            "Un débat inutile démarre 🤔",
-            "Quelqu'un s'endort en premier 🛏️",
-            "Quelqu'un oublie un truc essentiel 🎒"
-        ];
+    <button id="resetButton">Réinitialiser</button>
 
-        const grid = document.getElementById("bingoGrid");
-
-        // Charger l'état des cases cochées depuis localStorage
-        const savedState = JSON.parse(localStorage.getItem("bingoState")) || [];
-
-        // Générer les cases
-        phrases.forEach((phrase, index) => {
-            const cell = document.createElement("div");
-            cell.classList.add("bingo-cell");
-            cell.textContent = phrase;
-
-            // Vérifier si cette case était déjà cochée
-            if (savedState.includes(index)) {
-                cell.classList.add("checked");
-            }
-
-            // Ajouter l'événement de clic
-            cell.addEventListener("click", () => {
-                cell.classList.toggle("checked");
-
-                // Sauvegarder l'état dans localStorage
-                const checkedCells = document.querySelectorAll(".bingo-cell.checked");
-                const checkedIndexes = [...checkedCells].map(cell => [...grid.children].indexOf(cell));
-                localStorage.setItem("bingoState", JSON.stringify(checkedIndexes));
-            });
-
-            grid.appendChild(cell);
-        });
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
