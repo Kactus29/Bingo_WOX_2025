@@ -1,17 +1,5 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-    padding: 20px;
-}
-
-h1 {
-    color: #333;
-}
-
 .bingo-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     max-width: 500px;
     margin: 20px auto;
@@ -34,9 +22,3 @@ h1 {
     text-decoration: line-through;
 }
 
-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
