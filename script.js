@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const phrases = [
+    let phrases = JSON.parse(localStorage.getItem("phrases")) || [
         "Cyrielle va se coucher tôt 😴",
         "Quelqu'un dit que c'était mieux avant (hors 3A)",
         "On est à court d'alcool 🍻",
@@ -16,36 +16,70 @@ document.addEventListener("DOMContentLoaded", () => {
     const grid = document.getElementById("bingoGrid");
     const resetButton = document.getElementById("resetButton");
 
-    // Déterminer le nombre de colonnes (racine carrée arrondie)
-    const size = Math.ceil(Math.sqrt(phrases.length));
-    grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    // Create popup
+    const popup = document.createElement("div");
+    popup.classList.add("popup");
+    popup.innerHTML = `
+        <p>Voulez-vous vraiment supprimer cette phrase ?</p>
+        <button id="confirmYes">Oui</button>
+        <button id="confirmNo">Non</button>
+    `;
+    document.body.appendChild(popup);
 
-    // Charger l'état des cases cochées
-    const savedState = JSON.parse(localStorage.getItem("bingoState")) || [];
+    const confirmYes = document.getElementById("confirmYes");
+    const confirmNo = document.getElementById("confirmNo");
 
-    // Générer les cases dynamiquement
-    phrases.forEach((phrase, index) => {
-        const cell = document.createElement("div");
-        cell.classList.add("bingo-cell");
-        cell.textContent = phrase;
+    const renderGrid = () => {
+        grid.innerHTML = '';
+        const size = Math.ceil(Math.sqrt(phrases.length));
+        grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
-        // Vérifier si cette case était déjà cochée
-        if (savedState.includes(index)) {
-            cell.classList.add("checked");
-        }
+        phrases.forEach((phrase, index) => {
+            const cell = document.createElement("div");
+            cell.classList.add("bingo-cell");
+            cell.textContent = phrase;
 
-        // Ajouter l'événement de clic
-        cell.addEventListener("click", () => {
-            cell.classList.toggle("checked");
+            // Add delete button
+            const deleteButton = document.createElement("div");
+            deleteButton.classList.add("delete-button");
+            deleteButton.textContent = "✖";
+            cell.appendChild(deleteButton);
 
-            // Sauvegarder l'état dans localStorage
-            const checkedCells = document.querySelectorAll(".bingo-cell.checked");
-            const checkedIndexes = [...checkedCells].map(cell => [...grid.children].indexOf(cell));
-            localStorage.setItem("bingoState", JSON.stringify(checkedIndexes));
+            deleteButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                popup.style.display = "block";
+                confirmYes.onclick = () => {
+                    phrases.splice(index, 1);
+                    localStorage.setItem("phrases", JSON.stringify(phrases));
+                    renderGrid();
+                    popup.style.display = "none";
+                };
+                confirmNo.onclick = () => {
+                    popup.style.display = "none";
+                };
+            });
+
+            // Vérifier si cette case était déjà cochée
+            const savedState = JSON.parse(localStorage.getItem("bingoState")) || [];
+            if (savedState.includes(index)) {
+                cell.classList.add("checked");
+            }
+
+            // Ajouter l'événement de clic
+            cell.addEventListener("click", () => {
+                cell.classList.toggle("checked");
+
+                // Sauvegarder l'état dans localStorage
+                const checkedCells = document.querySelectorAll(".bingo-cell.checked");
+                const checkedIndexes = [...checkedCells].map(cell => [...grid.children].indexOf(cell));
+                localStorage.setItem("bingoState", JSON.stringify(checkedIndexes));
+            });
+
+            grid.appendChild(cell);
         });
+    };
 
-        grid.appendChild(cell);
-    });
+    renderGrid();
 
     // Réinitialiser le bingo
     resetButton.addEventListener("click", () => {
