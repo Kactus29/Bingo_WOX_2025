@@ -18,18 +18,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const newPhraseInput = document.getElementById("newPhrase");
     const addPhraseButton = document.getElementById("addPhraseButton");
 
-    // Create popup
-    const popup = document.createElement("div");
-    popup.classList.add("popup");
-    popup.innerHTML = `
+    // Create delete popup
+    const deletePopup = document.createElement("div");
+    deletePopup.classList.add("popup");
+    deletePopup.innerHTML = `
         <p>Voulez-vous vraiment supprimer cette phrase ?</p>
         <button id="confirmYes">Oui</button>
         <button id="confirmNo">Non</button>
     `;
-    document.body.appendChild(popup);
+    document.body.appendChild(deletePopup);
 
     const confirmYes = document.getElementById("confirmYes");
     const confirmNo = document.getElementById("confirmNo");
+
+    // Create edit popup
+    const editPopup = document.createElement("div");
+    editPopup.classList.add("edit-popup");
+    editPopup.innerHTML = `
+        <input type="text" id="editPhraseInput">
+        <button id="editConfirmYes">Valider</button>
+        <button id="editConfirmNo">Annuler</button>
+    `;
+    document.body.appendChild(editPopup);
+
+    const editPhraseInput = document.getElementById("editPhraseInput");
+    const editConfirmYes = document.getElementById("editConfirmYes");
+    const editConfirmNo = document.getElementById("editConfirmNo");
 
     const renderGrid = () => {
         grid.innerHTML = '';
@@ -49,15 +63,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
             deleteButton.addEventListener("click", (e) => {
                 e.stopPropagation();
-                popup.style.display = "block";
+                deletePopup.style.display = "block";
                 confirmYes.onclick = () => {
                     phrases.splice(index, 1);
                     localStorage.setItem("phrases", JSON.stringify(phrases));
                     renderGrid();
-                    popup.style.display = "none";
+                    deletePopup.style.display = "none";
                 };
                 confirmNo.onclick = () => {
-                    popup.style.display = "none";
+                    deletePopup.style.display = "none";
+                };
+            });
+
+            // Add edit button
+            const editButton = document.createElement("div");
+            editButton.classList.add("edit-button");
+            editButton.textContent = "🛠";
+            cell.appendChild(editButton);
+
+            editButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                editPhraseInput.value = phrase;
+                editPopup.style.display = "block";
+                editConfirmYes.onclick = () => {
+                    phrases[index] = editPhraseInput.value;
+                    localStorage.setItem("phrases", JSON.stringify(phrases));
+                    renderGrid();
+                    editPopup.style.display = "none";
+                };
+                editConfirmNo.onclick = () => {
+                    editPopup.style.display = "none";
                 };
             });
 
