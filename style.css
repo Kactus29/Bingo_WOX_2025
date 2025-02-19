@@ -55,3 +55,22 @@
     margin: 5px;
 }
 
+.input-container {
+    text-align: center;
+    margin: 20px;
+}
+
+#newPhrase {
+    padding: 10px;
+    font-size: 16px;
+    width: 80%;
+    max-width: 400px;
+}
+
+#addPhraseButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+

@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const grid = document.getElementById("bingoGrid");
     const resetButton = document.getElementById("resetButton");
+    const newPhraseInput = document.getElementById("newPhrase");
+    const addPhraseButton = document.getElementById("addPhraseButton");
 
     // Create popup
     const popup = document.createElement("div");
@@ -78,6 +80,16 @@ document.addEventListener("DOMContentLoaded", () => {
             grid.appendChild(cell);
         });
     };
+
+    addPhraseButton.addEventListener("click", () => {
+        const newPhrase = newPhraseInput.value.trim();
+        if (newPhrase) {
+            phrases.push(newPhrase);
+            localStorage.setItem("phrases", JSON.stringify(phrases));
+            renderGrid();
+            newPhraseInput.value = '';
+        }
+    });
 
     renderGrid();
 
