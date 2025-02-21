@@ -22,3 +22,4 @@ jobs:
             git push
           else
             echo "No changes to commit"
+          fi  # Add this line to close the if statement
