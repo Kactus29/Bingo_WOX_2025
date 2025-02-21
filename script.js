@@ -37,14 +37,43 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const savePhrases = async (phrases) => {
-        const jsonContent = JSON.stringify(phrases, null, 2);
-        const blob = new Blob([jsonContent], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'phrases.json';
-        a.click();
-        URL.revokeObjectURL(url);
+        const token = 'YOUR_GITHUB_TOKEN'; // Remplacez par votre token GitHub
+        const repo = 'YOUR_GITHUB_REPO'; // Remplacez par votre dépôt GitHub
+        const path = 'phrases.json';
+        const message = 'Update phrases.json';
+        const content = btoa(JSON.stringify(phrases, null, 2));
+
+        const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                content: content,
+                sha: await getFileSha(repo, path, token)
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update phrases.json');
+        }
+    };
+
+    const getFileSha = async (repo, path, token) => {
+        const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get file SHA');
+        }
+
+        const data = await response.json();
+        return data.sha;
     };
 
     const renderGrid = async () => {
