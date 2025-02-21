@@ -30,17 +30,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const editConfirmYes = editPopup.querySelector("#editConfirmYes");
     const editConfirmNo = editPopup.querySelector("#editConfirmNo");
 
-    const fetchPhrases = () => {
+    const fetchPhrasesFromLocalStorage = () => {
         const phrases = localStorage.getItem('phrases');
-        return phrases ? JSON.parse(phrases) : [];
+        return phrases ? JSON.parse(phrases) : null;
+    };
+
+    const fetchPhrasesFromJSON = async () => {
+        const response = await fetch('phrases.json');
+        const phrases = await response.json();
+        return phrases;
     };
 
     const savePhrases = (phrases) => {
         localStorage.setItem('phrases', JSON.stringify(phrases));
+        updatePhrasesJSON(phrases);
     };
 
-    const renderGrid = () => {
-        const phrases = fetchPhrases();
+    const updatePhrasesJSON = async (phrases) => {
+        await fetch('phrases.json', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(phrases, null, 2)
+        });
+    };
+
+    const renderGrid = async () => {
+        let phrases = fetchPhrasesFromLocalStorage();
+        if (!phrases) {
+            phrases = await fetchPhrasesFromJSON();
+            savePhrases(phrases);
+        }
         grid.innerHTML = '';
         const size = Math.ceil(Math.sqrt(phrases.length));
         grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
@@ -110,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addPhraseButton.addEventListener("click", () => {
         const newPhrase = newPhraseInput.value.trim();
         if (newPhrase) {
-            const phrases = fetchPhrases();
+            const phrases = fetchPhrasesFromLocalStorage();
             phrases.push({ text: newPhrase, checked: false });
             savePhrases(phrases);
             renderGrid();
