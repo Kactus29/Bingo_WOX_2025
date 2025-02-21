@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     document.body.appendChild(deletePopup);
 
-    const confirmYes = document.getElementById("confirmYes");
-    const confirmNo = document.getElementById("confirmNo");
+    const confirmYes = deletePopup.querySelector("#confirmYes");
+    const confirmNo = deletePopup.querySelector("#confirmNo");
 
     // Create edit popup
     const editPopup = document.createElement("div");
@@ -26,58 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     document.body.appendChild(editPopup);
 
-    const editPhraseInput = document.getElementById("editPhraseInput");
-    const editConfirmYes = document.getElementById("editConfirmYes");
-    const editConfirmNo = document.getElementById("editConfirmNo");
+    const editPhraseInput = editPopup.querySelector("#editPhraseInput");
+    const editConfirmYes = editPopup.querySelector("#editConfirmYes");
+    const editConfirmNo = editPopup.querySelector("#editConfirmNo");
 
-    const fetchPhrases = async () => {
-        const response = await fetch('phrases.json');
-        const phrases = await response.json();
-        return phrases;
+    const fetchPhrases = () => {
+        const phrases = localStorage.getItem('phrases');
+        return phrases ? JSON.parse(phrases) : [];
     };
 
-    const savePhrases = async (phrases) => {
-        const token = 'YOUR_GITHUB_TOKEN'; // Remplacez par votre token GitHub
-        const repo = 'YOUR_GITHUB_REPO'; // Remplacez par votre dépôt GitHub
-        const path = 'phrases.json';
-        const message = 'Update phrases.json';
-        const content = btoa(JSON.stringify(phrases, null, 2));
-
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: message,
-                content: content,
-                sha: await getFileSha(repo, path, token)
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update phrases.json');
-        }
+    const savePhrases = (phrases) => {
+        localStorage.setItem('phrases', JSON.stringify(phrases));
     };
 
-    const getFileSha = async (repo, path, token) => {
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-            headers: {
-                'Authorization': `token ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to get file SHA');
-        }
-
-        const data = await response.json();
-        return data.sha;
-    };
-
-    const renderGrid = async () => {
-        const phrases = await fetchPhrases();
+    const renderGrid = () => {
+        const phrases = fetchPhrases();
         grid.innerHTML = '';
         const size = Math.ceil(Math.sqrt(phrases.length));
         grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
@@ -96,9 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteButton.addEventListener("click", (e) => {
                 e.stopPropagation();
                 deletePopup.style.display = "block";
-                confirmYes.onclick = async () => {
+                confirmYes.onclick = () => {
                     phrases.splice(index, 1);
-                    await savePhrases(phrases);
+                    savePhrases(phrases);
                     renderGrid();
                     deletePopup.style.display = "none";
                 };
@@ -117,9 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.stopPropagation();
                 editPhraseInput.value = phrase.text;
                 editPopup.style.display = "block";
-                editConfirmYes.onclick = async () => {
+                editConfirmYes.onclick = () => {
                     phrases[index].text = editPhraseInput.value;
-                    await savePhrases(phrases);
+                    savePhrases(phrases);
                     renderGrid();
                     editPopup.style.display = "none";
                 };
@@ -134,9 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Ajouter l'événement de clic
-            cell.addEventListener("click", async () => {
+            cell.addEventListener("click", () => {
                 phrase.checked = !phrase.checked;
-                await savePhrases(phrases);
+                savePhrases(phrases);
                 cell.classList.toggle("checked");
             });
 
@@ -144,12 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    addPhraseButton.addEventListener("click", async () => {
+    addPhraseButton.addEventListener("click", () => {
         const newPhrase = newPhraseInput.value.trim();
         if (newPhrase) {
-            const phrases = await fetchPhrases();
+            const phrases = fetchPhrases();
             phrases.push({ text: newPhrase, checked: false });
-            await savePhrases(phrases);
+            savePhrases(phrases);
             renderGrid();
             newPhraseInput.value = '';
         }
